@@ -1,0 +1,914 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<title>Cloud Drive</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+<style>
+/* ─── TOKENS ─────────────────────────────────── */
+:root {
+  --bg:       transparent; 
+  --surface:  rgba(255, 255, 255, 0.85);
+  --surface2: rgba(240, 242, 245, 0.85);
+  --surface3: rgba(228, 231, 236, 0.85);
+  --accent:   #1a73e8;
+  --accent-h: #1557b0;
+  --green:    #188038;
+  --danger:   #c5221f;
+  --text:     #1f2328;
+  --muted:    #6e7681;
+  --border:   rgba(208, 215, 222, 0.6);
+  --shadow-sm: 0 4px 12px rgba(0,0,0,0.05);
+  --shadow-md: 0 8px 24px rgba(0,0,0,0.08);
+  --shadow-lg: 0 12px 32px rgba(0,0,0,0.12);
+  --radius:   16px;
+  --t: 0.22s cubic-bezier(.4,0,.2,1);
+}
+[data-theme="dark"] {
+  --bg:       transparent;
+  --surface:  rgba(10, 10, 10, 0.75);
+  --surface2: rgba(25, 25, 25, 0.75);
+  --surface3: rgba(35, 35, 35, 0.75);
+  --accent:   #0de4b9; 
+  --accent-h: #0bc29d;
+  --green:    #3fb950;
+  --danger:   #f85149;
+  --text:     #f0f0f0;
+  --muted:    #888888;
+  --border:   rgba(255, 255, 255, 0.1);
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+body { 
+  font-family: 'Plus Jakarta Sans', sans-serif; 
+  background: var(--bg); 
+  color: var(--text); 
+  min-height: 100vh; 
+  overflow-x: hidden; 
+}
+
+/* ─── BATMAN VIEW TRANSITION ─────────────────── */
+::view-transition-old(root), ::view-transition-new(root) { animation-duration: 0.85s; animation-fill-mode: both; animation-timing-function: cubic-bezier(0.7, 0, 0.3, 1); mix-blend-mode: normal; }
+::view-transition-old(root) { animation-name: blur-fade-out; z-index: 1; }
+::view-transition-new(root) {
+  animation-name: bat-grow-blur-in; z-index: 2;
+  -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 726 252.17'%3E%3Cpath d='M483.92 0S481.38 24.71 466 40.11c-11.74 11.74-24.09 12.66-40.26 15.07-9.42 1.41-29.7 3.77-34.81-.79-2.37-2.11-3-21-3.22-27.62-.21-6.92-1.36-16.52-2.82-18-.75 3.06-2.49 11.53-3.09 13.61S378.49 34.3 378 36a85.13 85.13 0 0 0-30.09 0c-.46-1.67-3.17-11.48-3.77-13.56s-2.34-10.55-3.09-13.61c-1.45 1.45-2.61 11.05-2.82 18-.21 6.67-.84 25.51-3.22 27.62-5.11 4.56-25.38 2.2-34.8.79-16.16-2.47-28.51-3.39-40.21-15.13C244.57 24.71 242 0 242 0H0s69.52 22.74 97.52 68.59c16.56 27.11 14.14 58.49 9.92 74.73C170 140 221.46 140 273 158.57c69.23 24.93 83.2 76.19 90 93.6 6.77-17.41 20.75-68.67 90-93.6 51.54-18.56 103-18.59 165.56-15.25-4.21-16.24-6.63-47.62 9.93-74.73C656.43 22.74 726 0 726 0z'/%3E%3C/svg%3E") center / 0px no-repeat;
+  mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 726 252.17'%3E%3Cpath d='M483.92 0S481.38 24.71 466 40.11c-11.74 11.74-24.09 12.66-40.26 15.07-9.42 1.41-29.7 3.77-34.81-.79-2.37-2.11-3-21-3.22-27.62-.21-6.92-1.36-16.52-2.82-18-.75 3.06-2.49 11.53-3.09 13.61S378.49 34.3 378 36a85.13 85.13 0 0 0-30.09 0c-.46-1.67-3.17-11.48-3.77-13.56s-2.34-10.55-3.09-13.61c-1.45 1.45-2.61 11.05-2.82 18-.21 6.67-.84 25.51-3.22 27.62-5.11 4.56-25.38 2.2-34.8.79-16.16-2.47-28.51-3.39-40.21-15.13C244.57 24.71 242 0 242 0H0s69.52 22.74 97.52 68.59c16.56 27.11 14.14 58.49 9.92 74.73C170 140 221.46 140 273 158.57c69.23 24.93 83.2 76.19 90 93.6 6.77-17.41 20.75-68.67 90-93.6 51.54-18.56 103-18.59 165.56-15.25-4.21-16.24-6.63-47.62 9.93-74.73C656.43 22.74 726 0 726 0z'/%3E%3C/svg%3E") center / 0px no-repeat;
+}
+@keyframes blur-fade-out { 0% { filter: blur(0px); opacity: 1; } 40% { filter: blur(8px); opacity: 1; } 100% { filter: blur(12px); opacity: 0; } }
+@keyframes bat-grow-blur-in { 0% { mask-size: 0vmax; -webkit-mask-size: 0vmax; filter: blur(12px); } 60% { filter: blur(2px); } 100% { mask-size: 500vmax; -webkit-mask-size: 500vmax; filter: blur(0px); } }
+
+/* ─── LAYOUT ─────────────────────────────────── */
+.app { max-width: 1100px; margin: 0 auto; padding: 44px 28px 80px; animation: fadeUp .5s ease both; display: none; position: relative; z-index: 10; }
+.app.show { display: block; }
+@keyframes fadeUp { from { opacity:0; transform:translateY(18px); } to { opacity:1; transform:translateY(0); } }
+
+/* ─── HEADER ─────────────────────────────────── */
+header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 38px; }
+.logo { display: flex; align-items: center; gap: 11px; }
+.logo-mark { width: 40px; height: 40px; border-radius: 10px; background: var(--accent); flex-shrink: 0; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 15px rgba(13, 228, 185, 0.3); }
+.logo-mark svg { width: 22px; height: 22px; stroke: #fff; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.logo h1 { font-size: 1.42rem; font-weight: 800; letter-spacing: -.3px; color: var(--text); }
+.header-actions { display: flex; align-items: center; gap: 8px; }
+
+.icon-btn { width: 40px; height: 40px; border-radius: 10px; border: 1px solid var(--border); background: var(--surface); display: flex; align-items: center; justify-content: center; cursor: pointer; box-shadow: var(--shadow-sm); backdrop-filter: blur(10px); position: relative; transition: transform .2s cubic-bezier(.34,1.56,.64,1), background-color var(--t), border-color var(--t); }
+.icon-btn:hover { background: var(--surface2); transform: scale(1.08); }
+.icon-btn svg { width: 16px; height: 16px; stroke: var(--text); fill: none; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+.icon-btn.danger-hover:hover svg { stroke: var(--danger); }
+.icon-btn[data-count]::after { content: attr(data-count); position: absolute; top: -5px; right: -5px; background: var(--danger); color: #fff; font-size: 9px; font-weight: 700; min-width: 18px; height: 18px; border-radius: 6px; padding: 0 4px; display: flex; align-items: center; justify-content: center; opacity: 0; transform: scale(0); transition: opacity .2s, transform .25s cubic-bezier(.34,1.56,.64,1); }
+.icon-btn.has-items::after { opacity:1; transform:scale(1); }
+
+/* ─── UPLOAD ZONE ────────────────────────────── */
+.upload-zone { background: var(--surface); border: 2px dashed var(--border); border-radius: var(--radius); padding: 34px 24px; text-align: center; margin-bottom: 38px; position: relative; overflow: hidden; box-shadow: var(--shadow-sm); backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px); transition: border-color var(--t), box-shadow var(--t); }
+.upload-zone:hover, .upload-zone.drag-over { border-color: var(--accent); background: var(--surface2); box-shadow: 0 0 0 3px rgba(13, 228, 185, 0.15); }
+.upload-zone-icon { width: 48px; height: 48px; margin: 0 auto 14px; background: var(--surface2); border-radius: 12px; display: flex; align-items: center; justify-content: center; transition: transform .35s cubic-bezier(.34,1.56,.64,1); }
+.upload-zone-icon svg { width: 23px; height: 23px; stroke: var(--accent); fill: none; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+.upload-zone:hover .upload-zone-icon, .upload-zone.drag-over .upload-zone-icon { transform: translateY(-5px) scale(1.08); background: rgba(13, 228, 185, 0.1); }
+.upload-label { font-weight: 700; font-size: .96rem; margin-bottom: 4px; }
+.upload-sub { font-size: .8rem; color: var(--muted); margin-bottom: 20px; }
+.upload-row { display: flex; align-items: center; justify-content: center; gap: 10px; flex-wrap: wrap; }
+.file-input-wrapper { position: relative; overflow: hidden; }
+.file-input-wrapper input[type=file] { position: absolute; inset:0; opacity:0; cursor:pointer; }
+.file-chip { display: inline-flex; align-items: center; gap: 6px; padding: 8px 16px; border: 1px solid var(--border); border-radius: 8px; font-family: inherit; font-size: .86rem; font-weight: 500; color: var(--text); background: var(--surface); cursor: pointer; transition: border-color var(--t), transform .2s; }
+.file-chip svg { width: 14px; height: 14px; stroke: var(--muted); fill: none; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; flex-shrink:0; }
+.file-chip:hover { background: var(--surface2); border-color: var(--accent); transform: translateY(-1px); }
+
+/* ─── FLUID PROGRESS BAR ─────────────────────── */
+.progress-wrapper { max-width: 400px; margin: 0 auto; opacity: 0; height: 0; overflow: hidden; transition: opacity 0.4s ease, height 0.4s ease, margin 0.4s ease; }
+.progress-wrapper.show { opacity: 1; height: 40px; margin-top: 25px; }
+.progress-info { display: flex; justify-content: center; font-size: 0.8rem; font-weight: 600; color: var(--muted); margin-bottom: 8px; letter-spacing: 0.5px; }
+.progress-track { width: 100%; height: 10px; background: var(--surface3); border-radius: 6px; overflow: hidden; box-shadow: inset 0 1px 3px rgba(0,0,0,0.1); }
+.progress-fill { height: 100%; width: 0%; border-radius: 6px; background: linear-gradient(90deg, var(--accent), #7bb0ff, var(--accent)); background-size: 200% 100%; transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1), background-color 0.4s ease; animation: liquidFlow 1.5s linear infinite; }
+.progress-fill.processing { background: repeating-linear-gradient(45deg, var(--accent), var(--accent) 10px, #7bb0ff 10px, #7bb0ff 20px); background-size: 28px 28px; animation: stripeMove 0.5s linear infinite; }
+@keyframes liquidFlow { 0% { background-position: 100% 0; } 100% { background-position: -100% 0; } }
+@keyframes stripeMove { 0% { background-position: 0 0; } 100% { background-position: 28px 0; } }
+
+/* ─── BUTTONS ────────────────────────────────── */
+.btn { display: inline-flex; align-items: center; gap: 5px; padding: 9px 18px; border: none; border-radius: 8px; font-family: inherit; font-size: .87rem; font-weight: 600; cursor: pointer; position: relative; overflow: hidden; transition: transform .22s cubic-bezier(.34,1.56,.64,1), box-shadow .22s; }
+.btn::after { content:''; position:absolute; inset:0; background:rgba(255,255,255,0.1); opacity:0; transition:opacity .15s; }
+.btn:active::after { opacity:1; }
+.btn svg { width: 13px; height: 13px; stroke: currentColor; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; flex-shrink:0; }
+.btn-text-stack { display: flex; flex-direction: column; align-items: flex-start; text-align: left; line-height: 1.15; }
+.btn-text-stack .file-size { font-size: 0.6rem; font-weight: 500; opacity: 0.85; }
+.btn-primary { background: var(--accent); color: #fff; box-shadow: 0 4px 15px rgba(13, 228, 185, 0.3); }
+.btn-primary:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(13, 228, 185, 0.4); }
+.btn-primary svg { stroke: #fff; }
+.btn-sm { padding: 5px 11px; font-size: .76rem; border-radius: 6px; }
+.btn-dl  { background: rgba(24,128,56,.09);  color: var(--green);  border: 1px solid rgba(24,128,56,.22); }
+.btn-dl:hover  { background: rgba(24,128,56,.16);  transform: translateY(-1px); }
+.btn-del { background: rgba(197,34,31,.08);  color: var(--danger); border: 1px solid rgba(197,34,31,.18); }
+.btn-del:hover { background: rgba(197,34,31,.15); transform: translateY(-1px); }
+.btn-rst { background: rgba(26,115,232,.09); color: var(--accent); border: 1px solid rgba(26,115,232,.22); }
+.btn-rst:hover { background: rgba(26,115,232,.16); transform: translateY(-1px); }
+#status { margin-top: 10px; font-size:.8rem; min-height:14px; color: var(--green); opacity:0; transform:translateY(4px); transition: opacity .25s, transform .25s; }
+#status.show { opacity:1; transform:translateY(0); }
+
+/* ─── SECTION BAR & GALLERY ──────────────────── */
+.section-bar { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; padding-bottom: 12px; border-bottom: 1px solid var(--border); }
+.section-title { font-size: .76rem; font-weight: 700; text-transform: uppercase; letter-spacing: .1em; color: var(--muted); }
+.view-toggle { display: flex; gap: 4px; }
+.view-btn { width: 30px; height: 30px; border-radius: 7px; border: 1px solid var(--border); background: var(--surface); cursor: pointer; display: flex; align-items: center; justify-content: center; transition: transform .2s; color: var(--muted); backdrop-filter: blur(5px); }
+.view-btn svg { width: 14px; height: 14px; stroke: currentColor; fill: none; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+.view-btn:hover { background: var(--surface2); transform: scale(1.06); }
+.view-btn.active { background: var(--accent); border-color: var(--accent); color: #fff; }
+.view-btn.active svg { stroke: #fff; }
+.gallery { display: grid; grid-template-columns: repeat(auto-fill, minmax(195px, 1fr)); gap: 15px; }
+.file-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; box-shadow: var(--shadow-sm); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); transition: transform .3s cubic-bezier(.34,1.56,.64,1), box-shadow .3s; animation: cardIn .38s cubic-bezier(.34,1.56,.64,1) both; }
+@keyframes cardIn { from { opacity:0; transform:scale(.88) translateY(10px); } to { opacity:1; transform:scale(1) translateY(0); } }
+.file-card:hover { transform: translateY(-5px) scale(1.01); box-shadow: var(--shadow-lg); border-color: rgba(13, 228, 185, 0.4); }
+
+/* Added cursor pointer to indicate the thumbnail can be clicked */
+.card-thumb-wrap { overflow:hidden; position:relative; cursor:pointer; }
+.card-thumb { width:100%; height:128px; object-fit:cover; display:block; background:var(--surface2); transition:transform .32s ease; }
+.file-card:hover .card-thumb { transform:scale(1.05); }
+
+/* Play icon overlay for media files */
+.card-thumb-wrap::after { content:''; position:absolute; inset:0; background:linear-gradient(to bottom,transparent 55%,rgba(0,0,0,0.22)); opacity:0; transition:opacity .25s; }
+.file-card:hover .card-thumb-wrap::after { opacity:1; }
+
+.card-body { padding: 10px 12px 12px; }
+.file-name { font-size:.79rem; font-weight:600; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; margin-bottom:8px; color:var(--text); }
+.card-actions { display:flex; gap:6px; }
+.gallery.row-view { grid-template-columns:1fr; gap:7px; }
+.gallery.row-view .file-card { display:flex; align-items:center; border-radius:10px; }
+.gallery.row-view .card-thumb-wrap { width:58px; height:48px; flex-shrink:0; border-radius:0; }
+.gallery.row-view .card-thumb { width:58px; height:48px; border-radius:0; }
+.gallery.row-view .card-thumb-wrap::after { display:none; }
+.gallery.row-view .file-card:hover { transform:translateX(4px) scale(1); box-shadow:var(--shadow-md); }
+.gallery.row-view .card-body { flex:1; display:flex; align-items:center; justify-content:space-between; padding:0 14px; gap:10px; }
+.gallery.row-view .file-name { margin-bottom:0; flex:1; }
+.gallery.row-view .card-actions { flex-shrink:0; }
+.empty-state { grid-column:1/-1; text-align:center; padding:52px 0; color:var(--muted); font-size:.88rem; animation:fadeUp .4s ease; background: var(--surface); border-radius: var(--radius); border: 1px dashed var(--border); backdrop-filter: blur(10px); }
+.empty-icon { width:52px; height:52px; background:var(--surface2); border-radius:13px; display:flex; align-items:center; justify-content:center; margin:0 auto 13px; opacity:.6; }
+.empty-icon svg { width:26px; height:26px; stroke:var(--muted); fill:none; stroke-width:1.5; stroke-linecap:round; stroke-linejoin:round; }
+
+/* ─── LIGHTBOX OVERLAY ───────────────────────── */
+.lightbox-overlay { position:fixed; inset:0; background:rgba(0,0,0,0.92); backdrop-filter:blur(10px); -webkit-backdrop-filter:blur(10px); z-index:999999; display:flex; align-items:center; justify-content:center; opacity:0; pointer-events:none; transition:opacity .3s ease; }
+.lightbox-overlay.show { opacity:1; pointer-events:all; }
+.lightbox-content { max-width:90vw; max-height:85vh; border-radius:12px; box-shadow:0 20px 60px rgba(0,0,0,0.5); object-fit:contain; transform:scale(0.95); transition:transform .3s cubic-bezier(.34,1.56,.64,1); outline:none; }
+.lightbox-overlay.show .lightbox-content { transform:scale(1); }
+.lightbox-close { position:absolute; top:24px; right:24px; width:44px; height:44px; border-radius:50%; background:rgba(255,255,255,0.1); border:1px solid rgba(255,255,255,0.2); color:#fff; cursor:pointer; display:flex; align-items:center; justify-content:center; transition:all .2s; z-index:2; }
+.lightbox-close:hover { background:rgba(255,255,255,0.2); transform:scale(1.1); }
+.lightbox-close svg { width:20px; height:20px; stroke:currentColor; fill:none; stroke-width:2; }
+.lightbox-title { position:absolute; top:32px; left:32px; color:#fff; font-weight:600; font-size:1.1rem; text-shadow:0 2px 4px rgba(0,0,0,0.5); z-index:2; max-width:calc(100vw - 100px); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.lightbox-unsupported { color:#fff; text-align:center; padding:40px; }
+
+/* ─── OVERLAY & MODAL ────────────────────────── */
+.overlay { position:fixed; inset:0; background:rgba(0,0,0,0.35); backdrop-filter:blur(4px); z-index:100; opacity:0; pointer-events:none; transition:opacity .3s ease; }
+.overlay.show { opacity:1; pointer-events:all; }
+.modal { position:fixed; top:50%; left:50%; transform:translate(-50%,-46%) scale(.93); background:var(--surface); border:1px solid var(--border); border-radius:16px; padding:24px; width:370px; max-width:calc(100vw - 32px); max-height:68vh; overflow-y:auto; z-index:101; opacity:0; pointer-events:none; transition: transform .38s cubic-bezier(.34,1.56,.64,1), opacity .28s ease; box-shadow:var(--shadow-lg); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); }
+.modal.show { opacity:1; pointer-events:all; transform:translate(-50%,-50%) scale(1); }
+.modal::-webkit-scrollbar { width:4px; }
+.modal::-webkit-scrollbar-thumb { background:var(--border); border-radius:4px; }
+.modal-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:18px; }
+.modal-title { font-size:1rem; font-weight:700; display:flex; align-items:center; gap:8px; color:var(--text); }
+.modal-title svg { width:17px; height:17px; stroke:var(--text); fill:none; stroke-width:1.8; stroke-linecap:round; stroke-linejoin:round; }
+.close-btn { width:28px; height:28px; border-radius:7px; border:1px solid var(--border); background:var(--surface2); cursor:pointer; display:flex; align-items:center; justify-content:center; color:var(--muted); transition: transform .28s cubic-bezier(.34,1.56,.64,1); }
+.close-btn svg { width:12px; height:12px; stroke:currentColor; fill:none; stroke-width:2.2; stroke-linecap:round; }
+.close-btn:hover { background:rgba(197,34,31,.1); color:var(--danger); transform:rotate(90deg) scale(1.1); }
+.recycle-item { display:flex; align-items:center; justify-content:space-between; padding:9px 11px; border-radius:9px; background:var(--surface2); border:1px solid transparent; margin-bottom:6px; transition:border-color .2s, transform .28s cubic-bezier(.34,1.56,.64,1); animation:cardIn .35s ease both; }
+.recycle-item:hover { border-color:var(--border); transform:translateX(4px); }
+.r-icon { width:30px; height:30px; border-radius:7px; background:var(--surface3); display:flex; align-items:center; justify-content:center; flex-shrink:0; margin-right:9px; }
+.r-icon svg { width:14px; height:14px; stroke:var(--muted); fill:none; stroke-width:1.8; stroke-linecap:round; stroke-linejoin:round; }
+.recycle-name { font-size:.8rem; font-weight:500; color:var(--text); flex:1; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:145px; }
+.recycle-actions { display:flex; gap:5px; }
+.recycle-empty { text-align:center; padding:34px 0; color:var(--muted); font-size:.86rem; }
+.recycle-empty svg { width:34px; height:34px; stroke:var(--muted); fill:none; stroke-width:1.2; stroke-linecap:round; stroke-linejoin:round; display:block; margin:0 auto 10px; opacity:.3; }
+
+.toast { position:fixed; bottom:24px; left:50%; transform:translateX(-50%) translateY(14px); background:#1f2328; color:#fff; padding:9px 20px; border-radius:9px; font-size:.82rem; font-weight:500; box-shadow:var(--shadow-lg); z-index:200; opacity:0; pointer-events:none; transition:opacity .28s, transform .35s cubic-bezier(.34,1.56,.64,1); white-space:nowrap; }
+.toast.show { opacity:1; transform:translateX(-50%) translateY(0); }
+
+/* ─── ONEKO CSS ──────────────────────────────── */
+#oneko {
+  position: fixed; width: 32px; height: 32px; pointer-events: none; 
+  image-rendering: pixelated; z-index: 99999;
+  background-image: url('https://raw.githubusercontent.com/adryd325/oneko.js/main/oneko.gif');
+  display: none; 
+}
+
+@media (max-width:600px) {
+  .app { padding:24px 14px 60px; }
+  .logo h1 { font-size:1.2rem; }
+  .gallery { grid-template-columns:repeat(auto-fill,minmax(150px,1fr)); }
+  #oneko { display: none !important; }
+}
+</style>
+</head>
+<body>
+
+<div class="app" id="mainApp">
+  <header>
+    <div class="logo">
+      <div class="logo-mark">
+        <svg viewBox="0 0 24 24"><path d="M18 10h-1.26A8 8 0 1 0 9 20h9a5 5 0 0 0 0-10z"/></svg>
+      </div>
+      <h1>Cloud Drive</h1>
+    </div>
+    <div class="header-actions">
+      <div class="icon-btn" id="themeToggleBtn" onclick="toggleTheme()" title="Toggle Theme">
+        <svg viewBox="0 0 24 24"><path d="M21 12.79A9 9 0 1 1 11.21 3a7 7 0 0 0 9.79 9.79z"/></svg>
+      </div>
+      <div class="icon-btn" id="binBtn" onclick="openRecycle()" title="Recycle Bin">
+        <svg viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4h6v2"/></svg>
+      </div>
+      <div class="icon-btn danger-hover" onclick="logout()" title="Logout">
+        <svg viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+      </div>
+    </div>
+  </header>
+
+  <div class="upload-zone" id="uploadZone">
+    <div class="upload-zone-icon">
+      <svg viewBox="0 0 24 24"><polyline points="16 16 12 12 8 16"/><line x1="12" y1="12" x2="12" y2="21"/><path d="M20.39 18.39A5 5 0 0 0 18 9h-1.26A8 8 0 1 0 3 16.3"/></svg>
+    </div>
+    <p class="upload-label">Drop files here or browse</p>
+    <p class="upload-sub">Any file type supported</p>
+    <div class="upload-row">
+      <div class="file-input-wrapper">
+        <input type="file" id="fileInput" onchange="updateFileLabel(this)">
+        <div class="file-chip" id="fileLabel">
+          <svg viewBox="0 0 24 24"><path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"/></svg>
+          Choose file
+        </div>
+      </div>
+      <button class="btn btn-primary" onclick="uploadFile()">
+        <svg viewBox="0 0 24 24" style="stroke:#fff"><polyline points="16 16 12 12 8 16"/><line x1="12" y1="12" x2="12" y2="21"/><path d="M20.39 18.39A5 5 0 0 0 18 9h-1.26A8 8 0 1 0 3 16.3"/></svg>
+        Upload
+      </button>
+    </div>
+    
+    <div class="progress-wrapper" id="progressWrapper">
+      <div class="progress-info"><span id="progressText">Uploading... 0%</span></div>
+      <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
+    </div>
+    <p id="status"></p>
+  </div>
+
+  <div class="section-bar">
+    <span class="section-title">Your Files</span>
+    <div class="view-toggle">
+      <button class="view-btn active" id="gridViewBtn" onclick="setView('grid')" title="Grid view">
+        <svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+      </button>
+      <button class="view-btn" id="rowViewBtn" onclick="setView('row')" title="List view">
+        <svg viewBox="0 0 24 24"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6" stroke-width="2.5"/><line x1="3" y1="12" x2="3.01" y2="12" stroke-width="2.5"/><line x1="3" y1="18" x2="3.01" y2="18" stroke-width="2.5"/></svg>
+      </button>
+    </div>
+  </div>
+
+  <div class="gallery" id="gallery">
+    <div class="empty-state">
+      <div class="empty-icon">
+        <svg viewBox="0 0 24 24"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>
+      </div>
+      No files yet — upload something!
+    </div>
+  </div>
+</div>
+
+<div class="lightbox-overlay" id="lightboxOverlay" onclick="closePreview(event)">
+  <div class="lightbox-title" id="lightboxTitle"></div>
+  <button class="lightbox-close" onclick="closePreview(event)">
+    <svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+  </button>
+  <div id="lightboxContainer" style="display:flex; justify-content:center; align-items:center; width:100%; height:100%;"></div>
+</div>
+
+<div class="overlay" id="overlay" onclick="closeRecycle()"></div>
+<div class="modal" id="recycleModal">
+  <div class="modal-header">
+    <div class="modal-title">
+      <svg viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4h6v2"/></svg>
+      Recycle Bin
+    </div>
+    <button class="close-btn" onclick="closeRecycle()">
+      <svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+    </button>
+  </div>
+  <div id="recycleList"></div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<div id="oneko"></div>
+
+<script>
+const SUPABASE_URL = "https://kfjhespnobypmizhpszd.supabase.co";
+let currentView = 'grid';
+let isDark = false;
+
+/* ── AUTHENTICATION HEADERS HELPER ───────────── */
+function getAuthHeaders() {
+  return { 'Authorization': `Bearer ${localStorage.getItem('cloud_token')}` };
+}
+
+/* ── LOGOUT LOGIC (KICKS USER TO NEXT.JS) ────── */
+function logout() {
+  localStorage.removeItem('cloud_token');
+  window.location.href = 'http://localhost:3000';
+}
+
+/* ── SVG ICON STRINGS ────────────────────────── */
+const icoSun  = `<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>`;
+const icoMoon = `<svg viewBox="0 0 24 24"><path d="M21 12.79A9 9 0 1 1 11.21 3a7 7 0 0 0 9.79 9.79z"/></svg>`;
+const icoFile = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>`;
+const icoDl   = `<svg viewBox="0 0 24 24"><polyline points="8 17 12 21 16 17"/><line x1="12" y1="12" x2="12" y2="21"/><path d="M20.88 18.09A5 5 0 0 0 18 9h-1.26A8 8 0 1 0 3 16.36"/></svg>`;
+const icoDel  = `<svg viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4h6v2"/></svg>`;
+const icoRst  = `<svg viewBox="0 0 24 24"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-3.5"/></svg>`;
+const icoX    = `<svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>`;
+const icoBin  = `<svg viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4h6v2"/></svg>`;
+
+/* ── VIEW TRANSITIONS THEME TOGGLE ────────── */
+function toggleTheme() {
+  const switchDOM = () => {
+    isDark = !isDark;
+    const nextTheme = isDark ? 'dark' : 'light';
+    document.documentElement.setAttribute('data-theme', nextTheme);
+    document.getElementById('themeToggleBtn').innerHTML = isDark ? icoSun : icoMoon;
+  };
+  
+  if (document.startViewTransition) {
+    document.startViewTransition(switchDOM);
+  } else {
+    switchDOM();
+  }
+}
+
+/* ── VIEW TOGGLE ─────────────────────────────── */
+function setView(v) {
+  currentView = v;
+  const g = document.getElementById('gallery');
+  g.classList.toggle('row-view', v === 'row');
+  document.getElementById('gridViewBtn').classList.toggle('active', v === 'grid');
+  document.getElementById('rowViewBtn').classList.toggle('active', v === 'row');
+}
+
+function formatSize(bytes) {
+  if (bytes === undefined || bytes === null) return 'Size unk.';
+  if (bytes === 0) return '0 B';
+  const k = 1024, sizes = ['B', 'KB', 'MB', 'GB'];
+  const i = Math.floor(Math.log(bytes) / Math.log(k));
+  return parseFloat((bytes / Math.pow(k, i)).toFixed(1)) + ' ' + sizes[i];
+}
+
+function showToast(msg, ms=2800) {
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), ms);
+}
+function updateFileLabel(input) {
+  const lbl = document.getElementById('fileLabel');
+  if (input.files.length) {
+    const n = input.files[0].name;
+    lbl.innerHTML = `<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>${n.length>22?n.slice(0,22)+'…':n}`;
+  } else {
+    lbl.innerHTML = `<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"/></svg>Choose file`;
+  }
+}
+
+const zone = document.getElementById('uploadZone');
+zone.addEventListener('dragover', e => { e.preventDefault(); zone.classList.add('drag-over'); });
+zone.addEventListener('dragleave', () => zone.classList.remove('drag-over'));
+zone.addEventListener('drop', e => {
+  e.preventDefault(); zone.classList.remove('drag-over');
+  if (e.dataTransfer.files.length) {
+    document.getElementById('fileInput').files = e.dataTransfer.files;
+    updateFileLabel(document.getElementById('fileInput'));
+  }
+});
+
+/* ─── NEW MEDIA PREVIEW LOGIC (WITH PDF!) ────── */
+function openPreview(url, filename) {
+  const ext = filename.split('.').pop().toLowerCase();
+  const imgExts = ['jpg', 'jpeg', 'png', 'gif', 'webp', 'svg'];
+  const vidExts = ['mp4', 'webm', 'ogg', 'mov'];
+  const pdfExts = ['pdf']; 
+  
+  const container = document.getElementById('lightboxContainer');
+  document.getElementById('lightboxTitle').innerText = filename;
+  container.innerHTML = ''; // clear previous
+  
+  if (imgExts.includes(ext)) {
+    container.innerHTML = `<img src="${url}" class="lightbox-content">`;
+  } else if (vidExts.includes(ext)) {
+    container.innerHTML = `<video src="${url}" controls autoplay class="lightbox-content"></video>`;
+  } else if (pdfExts.includes(ext)) {
+    // Inject an iframe for PDFs! 
+    // Uses inline styles to ensure it fills the space and stays readable even in dark mode.
+    container.innerHTML = `<iframe src="${url}" class="lightbox-content" style="width: 85vw; height: 85vh; background: #ffffff; border: none; border-radius: 12px;"></iframe>`;
+  } else {
+    // Fancy fallback for unsupported files
+    container.innerHTML = `<div class="lightbox-unsupported">
+      <svg viewBox="0 0 24 24" style="width:64px;height:64px;stroke:var(--accent);fill:none;stroke-width:1.5;margin:0 auto 16px;display:block;"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+      <h2>No Preview Available</h2>
+      <p style="color:#aaa;margin-top:8px;">This file type cannot be previewed in the browser.</p>
+    </div>`;
+  }
+  
+  document.getElementById('lightboxOverlay').classList.add('show');
+}
+
+function closePreview(e) {
+  if (e && e.target.closest('.lightbox-content')) return;
+  document.getElementById('lightboxOverlay').classList.remove('show');
+  
+  setTimeout(() => { 
+    document.getElementById('lightboxContainer').innerHTML = ''; 
+  }, 300);
+}
+
+function makeCard(file, i) {
+  const url = `${SUPABASE_URL}/storage/v1/object/public/files/files/${file.name}`;
+  const actualSize = file.size || (file.metadata && file.metadata.size) || 0;
+  const sizeText = formatSize(actualSize);
+  
+  const el = document.createElement('div');
+  el.className = 'file-card';
+  el.style.animationDelay = `${i * 0.05}s`;
+  el.innerHTML = `
+    <div class="card-thumb-wrap" onclick="openPreview('${url}', '${file.name}')">
+      <img class="card-thumb" src="${url}" onerror="this.src='https://placehold.co/220x128/e4e7ec/9aa0a6?text=file'">
+    </div>
+    <div class="card-body">
+      <div class="file-name" title="${file.name}">${file.name}</div>
+      <div class="card-actions">
+        <button class="btn btn-sm btn-dl" onclick="downloadFile('${file.name}', ${actualSize})">
+          ${icoDl}
+          <div class="btn-text-stack">
+            <span>Save</span>
+            <span class="file-size">${sizeText}</span>
+          </div>
+        </button>
+        <button class="btn btn-sm btn-del" onclick="deleteFile('${file.name}',this)">${icoDel}</button>
+      </div>
+    </div>`;
+  return el;
+}
+
+async function loadFiles() {
+  try {
+    const r = await fetch('http://127.0.0.1:5000/files', { headers: getAuthHeaders() });
+    if(r.status === 401) { logout(); return; }
+    
+    const files = await r.json();
+    const g = document.getElementById('gallery');
+    g.innerHTML = '';
+    if (currentView === 'row') g.classList.add('row-view');
+    if (!files.length) {
+      g.innerHTML = `<div class="empty-state"><div class="empty-icon">${icoFile}</div>No files yet — upload something!</div>`;
+      return;
+    }
+    files.forEach((f, i) => g.appendChild(makeCard(f, i)));
+  } catch {}
+}
+
+async function uploadFile() {
+  const fi = document.getElementById('fileInput');
+  if (!fi.files.length) { showToast('Select a file first'); return; }
+  const file = fi.files[0];
+  const fd = new FormData(); 
+  fd.append('file', file);
+  
+  const progressWrapper = document.getElementById('progressWrapper');
+  const progressFill = document.getElementById('progressFill');
+  const progressText = document.getElementById('progressText');
+  
+  progressWrapper.classList.add('show');
+  progressFill.style.width = '0%';
+  progressFill.style.background = ''; 
+  progressFill.classList.remove('processing'); 
+  progressText.innerText = `Uploading... 0%`;
+  
+  const xhr = new XMLHttpRequest();
+  xhr.open('POST', 'http://127.0.0.1:5000/upload', true);
+  xhr.setRequestHeader('Authorization', `Bearer ${localStorage.getItem('cloud_token')}`);
+  
+  xhr.upload.addEventListener('progress', (e) => {
+    if (e.lengthComputable) {
+      const percent = Math.round((e.loaded / e.total) * 100);
+      progressFill.style.width = `${percent}%`;
+      if (percent === 100) {
+        progressText.innerText = `Saving to Cloud... Please wait`;
+        progressFill.classList.add('processing'); 
+      } else {
+        progressText.innerText = `Uploading... ${percent}%`;
+      }
+    }
+  });
+  
+  xhr.onload = function() {
+    progressFill.classList.remove('processing'); 
+    if (xhr.status === 401) { logout(); return; }
+    
+    if (xhr.status >= 200 && xhr.status < 300) {
+      try {
+        const d = JSON.parse(xhr.responseText);
+        progressText.innerText = 'Upload Complete!';
+        progressFill.style.background = 'var(--green)';
+        setTimeout(() => {
+          progressWrapper.classList.remove('show');
+          fi.value = ''; updateFileLabel(fi);
+          showToast(d.message || 'Uploaded');
+          loadFiles();
+        }, 1500);
+      } catch(e) { showToast('Upload failed'); }
+    } else {
+      progressText.innerText = 'Upload Error!';
+      progressFill.style.background = 'var(--danger)';
+      showToast('Server error');
+    }
+  };
+  
+  xhr.onerror = function() {
+    progressFill.classList.remove('processing');
+    progressText.innerText = 'Network Error!';
+    progressFill.style.background = 'var(--danger)';
+    showToast('Upload failed — server offline?');
+  };
+  xhr.send(fd);
+}
+
+async function downloadFile(name, totalBytes) {
+  try {
+    const progressWrapper = document.getElementById('progressWrapper');
+    const progressFill = document.getElementById('progressFill');
+    const progressText = document.getElementById('progressText');
+
+    progressWrapper.classList.add('show');
+    progressFill.style.width = '0%';
+    progressFill.style.background = ''; 
+    progressFill.classList.remove('processing'); 
+    progressText.innerText = `Downloading... 0%`;
+
+    const r = await fetch(`http://127.0.0.1:5000/download/${name}`, { headers: getAuthHeaders() });
+    if(r.status === 401) { logout(); return; }
+    const d = await r.json(); 
+    
+    const response = await fetch(d.download_url);
+    if (!response.ok) throw new Error('Network response was not ok');
+
+    const reader = response.body.getReader();
+    let receivedLength = 0;
+    const chunks = [];
+
+    while(true) {
+      const {done, value} = await reader.read();
+      if (done) break; 
+      
+      chunks.push(value);
+      receivedLength += value.length;
+
+      if (totalBytes > 0) {
+        const percent = Math.min(Math.round((receivedLength / totalBytes) * 100), 100);
+        progressFill.style.width = `${percent}%`;
+        progressText.innerText = `Downloading... ${percent}%`;
+      } else {
+        progressText.innerText = `Downloading... ${formatSize(receivedLength)}`;
+      }
+    }
+
+    const blob = new Blob(chunks);
+    progressText.innerText = 'Download Complete!';
+    progressFill.style.background = 'var(--green)';
+    
+    setTimeout(() => { progressWrapper.classList.remove('show'); }, 1500);
+
+    const blobUrl = window.URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.style.display = 'none';
+    a.href = blobUrl;
+    a.download = name; 
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    window.URL.revokeObjectURL(blobUrl);
+
+  } catch (error) { 
+    document.getElementById('progressText').innerText = 'Download Error!';
+    document.getElementById('progressFill').style.background = 'var(--danger)';
+    setTimeout(() => { document.getElementById('progressWrapper').classList.remove('show'); }, 2500);
+  }
+}
+
+async function deleteFile(name, btn) {
+  const card = btn.closest('.file-card');
+  card.style.transition = 'transform .24s ease, opacity .24s ease';
+  card.style.transform = 'scale(0.88)'; card.style.opacity = '0';
+  await new Promise(r => setTimeout(r, 230));
+  try {
+    const r = await fetch(`http://127.0.0.1:5000/delete/${name}`, { method:'DELETE', headers: getAuthHeaders() });
+    if(r.status === 401) { logout(); return; }
+    showToast('Moved to recycle bin'); loadFiles(); updateBinBadge();
+  } catch { loadFiles(); }
+}
+
+function openRecycle() {
+  document.getElementById('overlay').classList.add('show');
+  document.getElementById('recycleModal').classList.add('show');
+  loadRecycle();
+}
+function closeRecycle() {
+  document.getElementById('overlay').classList.remove('show');
+  document.getElementById('recycleModal').classList.remove('show');
+}
+
+async function loadRecycle() {
+  try {
+    const r = await fetch('http://127.0.0.1:5000/recycle', { headers: getAuthHeaders() });
+    if(r.status === 401) return;
+    const files = await r.json();
+    const list = document.getElementById('recycleList');
+    list.innerHTML = '';
+    if (!files.length) {
+      list.innerHTML = `<div class="recycle-empty">${icoBin}Bin is empty</div>`;
+      document.getElementById('binBtn').classList.remove('has-items');
+      return;
+    }
+    document.getElementById('binBtn').setAttribute('data-count', files.length);
+    document.getElementById('binBtn').classList.add('has-items');
+    files.forEach((file, i) => {
+      const div = document.createElement('div');
+      div.className = 'recycle-item'; div.style.animationDelay = `${i*.055}s`;
+      div.innerHTML = `<div class="r-icon">${icoFile}</div><span class="recycle-name" title="${file.name}">${file.name}</span><div class="recycle-actions"><button class="btn btn-sm btn-rst" onclick="restoreFile('${file.name}')">${icoRst}</button><button class="btn btn-sm btn-del" onclick="permanentDelete('${file.name}')">${icoX}</button></div>`;
+      list.appendChild(div);
+    });
+  } catch {
+    document.getElementById('recycleList').innerHTML = `<div class="recycle-empty">${icoBin}Could not load</div>`;
+  }
+}
+
+async function updateBinBadge() {
+  try {
+    const r = await fetch('http://127.0.0.1:5000/recycle', { headers: getAuthHeaders() });
+    if(r.status === 401) return;
+    const files = await r.json();
+    const btn = document.getElementById('binBtn');
+    if (files.length) { btn.setAttribute('data-count', files.length); btn.classList.add('has-items'); }
+    else btn.classList.remove('has-items');
+  } catch {}
+}
+
+async function restoreFile(name) {
+  try {
+    const r = await fetch(`http://127.0.0.1:5000/restore/${name}`, { method:'POST', headers: getAuthHeaders() });
+    if(r.status === 401) { logout(); return; }
+    showToast('File restored'); loadRecycle(); loadFiles();
+  } catch { showToast('Restore failed'); }
+}
+
+async function permanentDelete(name) {
+  try {
+    const r = await fetch(`http://127.0.0.1:5000/permanent_delete/${name}`, { method:'DELETE', headers: getAuthHeaders() });
+    if(r.status === 401) { logout(); return; }
+    showToast('Permanently deleted'); loadRecycle();
+  } catch { showToast('Delete failed'); }
+}
+
+/* ─── ONEKO CURSOR PET ────────────────────────── */
+(function oneko() {
+  const isReducedMotion = window.matchMedia(`(prefers-reduced-motion: reduce)`).matches;
+  if (isReducedMotion) return;
+
+  const nekoEl = document.getElementById("oneko");
+  let nekoPosX = 32, nekoPosY = 32;
+  let mousePosX = 0, mousePosY = 0;
+  let frameCount = 0, idleTime = 0;
+  let idleAnimation = null, idleAnimationFrame = 0;
+  const nekoSpeed = 10;
+
+  const spriteSets = {
+    idle: [[-3, -3]], alert: [[-7, -3]], scratchSelf: [[-5, 0], [-6, 0], [-7, 0]],
+    scratchWallN: [[0, 0], [-1, 0]], scratchWallS: [[-7, -1], [-6, -2]],
+    scratchWallE: [[-2, -2], [-2, -3]], scratchWallW: [[-4, 0], [-4, -1]],
+    tired: [[-3, -2]], sleeping: [[-2, 0], [-2, -1]],
+    N: [[-1, -2], [-1, -3]], NE: [[0, -2], [0, -3]], E: [[-3, 0], [-3, -1]], SE: [[-5, -1], [-5, -2]],
+    S: [[-6, -3], [-7, -2]], SW: [[-5, -3], [-6, -1]], W: [[-4, -2], [-4, -3]], NW: [[-1, -1], [-1, 0]],
+  };
+
+  function create() {
+    document.addEventListener("mousemove", (e) => {
+      mousePosX = e.clientX; mousePosY = e.clientY;
+    });
+    window.requestAnimationFrame(onAnimationFrame);
+  }
+
+  let lastFrameTimestamp;
+  function onAnimationFrame(timestamp) {
+    if (!lastFrameTimestamp) lastFrameTimestamp = timestamp;
+    if (timestamp - lastFrameTimestamp > 100) {
+      lastFrameTimestamp = timestamp;
+      frame();
+    }
+    window.requestAnimationFrame(onAnimationFrame);
+  }
+
+  function setSprite(name, frame) {
+    const sprite = spriteSets[name][frame % spriteSets[name].length];
+    nekoEl.style.backgroundPosition = `${sprite[0] * 32}px ${sprite[1] * 32}px`;
+  }
+
+  function resetIdleAnimation() {
+    idleAnimation = null;
+    idleAnimationFrame = 0;
+  }
+
+  function idle() {
+    idleTime += 1;
+    if (idleTime > 10 && Math.floor(Math.random() * 200) == 0 && idleAnimation == null) {
+      let avalibleIdleAnimations = ["sleeping", "scratchSelf"];
+      if (nekoPosX < 32) avalibleIdleAnimations.push("scratchWallW");
+      if (nekoPosY < 32) avalibleIdleAnimations.push("scratchWallN");
+      if (nekoPosX > window.innerWidth - 32) avalibleIdleAnimations.push("scratchWallE");
+      if (nekoPosY > window.innerHeight - 32) avalibleIdleAnimations.push("scratchWallS");
+      idleAnimation = avalibleIdleAnimations[Math.floor(Math.random() * avalibleIdleAnimations.length)];
+    }
+
+    switch (idleAnimation) {
+      case "sleeping":
+        if (idleAnimationFrame < 8) { setSprite("tired", 0); break; }
+        setSprite("sleeping", Math.floor(idleAnimationFrame / 4));
+        if (idleAnimationFrame > 192) resetIdleAnimation();
+        break;
+      case "scratchWallN": case "scratchWallS": case "scratchWallE": case "scratchWallW": case "scratchSelf":
+        setSprite(idleAnimation, idleAnimationFrame);
+        if (idleAnimationFrame > 9) resetIdleAnimation();
+        break;
+      default:
+        setSprite("idle", 0);
+        return;
+    }
+    idleAnimationFrame += 1;
+  }
+
+  function frame() {
+    frameCount += 1;
+    const diffX = nekoPosX - mousePosX + 16;
+    const diffY = nekoPosY - mousePosY + 16;
+    const distance = Math.sqrt(diffX ** 2 + diffY ** 2);
+
+    if (distance < nekoSpeed || distance < 48) { idle(); return; }
+
+    resetIdleAnimation();
+
+    if (idleTime > 1) {
+      setSprite("alert", 0);
+      idleTime = Math.min(idleTime, 7);
+      idleTime -= 1;
+      return;
+    }
+
+    let direction = "";
+    direction = diffY / distance > 0.5 ? "N" : "";
+    direction += diffY / distance < -0.5 ? "S" : "";
+    direction += diffX / distance > 0.5 ? "W" : "";
+    direction += diffX / distance < -0.5 ? "E" : "";
+    
+    setSprite(direction || "idle", frameCount);
+
+    nekoPosX -= (diffX / distance) * nekoSpeed;
+    nekoPosY -= (diffY / distance) * nekoSpeed;
+
+    nekoPosX = Math.min(Math.max(16, nekoPosX), window.innerWidth - 16);
+    nekoPosY = Math.min(Math.max(16, nekoPosY), window.innerHeight - 16);
+
+    nekoEl.style.left = `${nekoPosX - 16}px`;
+    nekoEl.style.top = `${nekoPosY - 16}px`;
+  }
+
+  create();
+})();
+
+/* ─── APP INITIALIZATION (THE GATEKEEPER) ────── */
+window.onload = () => { 
+  const urlParams = new URLSearchParams(window.location.search);
+  const tokenFromReact = urlParams.get('token');
+
+  if (tokenFromReact) {
+    localStorage.setItem('cloud_token', tokenFromReact);
+    window.history.replaceState({}, document.title, "/");
+  }
+
+  if (localStorage.getItem('cloud_token')) {
+    document.getElementById('mainApp').classList.add('show');
+    document.getElementById('oneko').style.display = 'block';
+    loadFiles(); 
+    updateBinBadge(); 
+  } else {
+    window.location.href = 'http://localhost:3000';
+  }
+};
+</script>
+
+<script>
+(function initDotGrid() {
+  const canvas = document.createElement('canvas');
+  canvas.style.position = 'fixed';
+  canvas.style.top = '0';
+  canvas.style.left = '0';
+  canvas.style.width = '100vw';
+  canvas.style.height = '100vh';
+  canvas.style.zIndex = '-1'; 
+  canvas.style.pointerEvents = 'none'; 
+  document.body.prepend(canvas);
+
+  const ctx = canvas.getContext('2d');
+  let width, height, dots = [];
+  
+  const gap = 18;
+  const dotSize = 1; 
+  const radius = dotSize / 2;
+  const proximity = 70;
+  const shockStrength = 7;
+  const baseColor = '#0de4b9'; 
+
+  let mouse = { x: -1000, y: -1000 };
+  
+  window.addEventListener('mousemove', (e) => { 
+    mouse.x = e.clientX; 
+    mouse.y = e.clientY; 
+  });
+  window.addEventListener('mouseout', () => { 
+    mouse.x = -1000; 
+    mouse.y = -1000; 
+  });
+  window.addEventListener('resize', setupGrid);
+
+  function setupGrid() {
+    const dpr = window.devicePixelRatio || 1;
+    width = window.innerWidth;
+    height = window.innerHeight;
+    
+    canvas.width = width * dpr;
+    canvas.height = height * dpr;
+    ctx.scale(dpr, dpr);
+
+    dots = [];
+    for (let x = gap / 2; x < width; x += gap) {
+      for (let y = gap / 2; y < height; y += gap) {
+        dots.push({ x, y, baseX: x, baseY: y });
+      }
+    }
+  }
+
+  function animate() {
+    const isDarkMode = typeof isDark !== 'undefined' && isDark;
+    ctx.fillStyle = isDarkMode ? '#000000' : '#f4f6f9';
+    ctx.fillRect(0, 0, width, height);
+    
+    const activeColor = isDarkMode ? '#ffffff' : '#000000';
+    
+    for (let i = 0; i < dots.length; i++) {
+      let dot = dots[i];
+      let dx = mouse.x - dot.baseX;
+      let dy = mouse.y - dot.baseY;
+      let dist = Math.sqrt(dx * dx + dy * dy);
+      
+      let color = baseColor;
+      let size = radius;
+      let drawX = dot.baseX;
+      let drawY = dot.baseY;
+
+      if (dist < proximity) {
+        let force = (proximity - dist) / proximity;
+        drawX -= (dx / dist) * force * shockStrength; 
+        drawY -= (dy / dist) * force * shockStrength;
+        
+        color = activeColor;
+        size = radius * 1.5; 
+      }
+
+      ctx.beginPath();
+      ctx.arc(drawX, drawY, size, 0, Math.PI * 2);
+      ctx.fillStyle = color;
+      ctx.fill();
+    }
+    requestAnimationFrame(animate);
+  }
+  
+  setupGrid();
+  animate();
+})();
+</script>
+</body>
+</html>
