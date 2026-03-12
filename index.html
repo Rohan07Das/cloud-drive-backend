@@ -326,7 +326,7 @@ function getAuthHeaders() {
 /* ── LOGOUT LOGIC (KICKS USER TO NEXT.JS) ────── */
 function logout() {
   localStorage.removeItem('cloud_token');
-  window.location.href = 'http://localhost:3000';
+  window.location.href = 'https://cloud-drive-frontend-theta.vercel.app';
 }
 
 /* ── SVG ICON STRINGS ────────────────────────── */
@@ -468,7 +468,7 @@ function makeCard(file, i) {
 
 async function loadFiles() {
   try {
-    const r = await fetch('http://127.0.0.1:5000/files', { headers: getAuthHeaders() });
+    const r = await fetch('https://cloud-drive-api-ag3g.onrender.com/files', { headers: getAuthHeaders() });
     if(r.status === 401) { logout(); return; }
     
     const files = await r.json();
@@ -501,7 +501,7 @@ async function uploadFile() {
   progressText.innerText = `Uploading... 0%`;
   
   const xhr = new XMLHttpRequest();
-  xhr.open('POST', 'http://127.0.0.1:5000/upload', true);
+  xhr.open('POST', 'https://cloud-drive-api-ag3g.onrender.com/upload', true);
   xhr.setRequestHeader('Authorization', `Bearer ${localStorage.getItem('cloud_token')}`);
   
   xhr.upload.addEventListener('progress', (e) => {
@@ -561,7 +561,7 @@ async function downloadFile(name, totalBytes) {
     progressFill.classList.remove('processing'); 
     progressText.innerText = `Downloading... 0%`;
 
-    const r = await fetch(`http://127.0.0.1:5000/download/${name}`, { headers: getAuthHeaders() });
+    const r = await fetch(`https://cloud-drive-api-ag3g.onrender.com/download/${name}`, { headers: getAuthHeaders() });
     if(r.status === 401) { logout(); return; }
     const d = await r.json(); 
     
@@ -617,7 +617,7 @@ async function deleteFile(name, btn) {
   card.style.transform = 'scale(0.88)'; card.style.opacity = '0';
   await new Promise(r => setTimeout(r, 230));
   try {
-    const r = await fetch(`http://127.0.0.1:5000/delete/${name}`, { method:'DELETE', headers: getAuthHeaders() });
+    const r = await fetch(`https://cloud-drive-api-ag3g.onrender.com/delete/${name}`, { method:'DELETE', headers: getAuthHeaders() });
     if(r.status === 401) { logout(); return; }
     showToast('Moved to recycle bin'); loadFiles(); updateBinBadge();
   } catch { loadFiles(); }
@@ -635,7 +635,7 @@ function closeRecycle() {
 
 async function loadRecycle() {
   try {
-    const r = await fetch('http://127.0.0.1:5000/recycle', { headers: getAuthHeaders() });
+    const r = await fetch('https://cloud-drive-api-ag3g.onrender.com/recycle', { headers: getAuthHeaders() });
     if(r.status === 401) return;
     const files = await r.json();
     const list = document.getElementById('recycleList');
@@ -660,7 +660,7 @@ async function loadRecycle() {
 
 async function updateBinBadge() {
   try {
-    const r = await fetch('http://127.0.0.1:5000/recycle', { headers: getAuthHeaders() });
+    const r = await fetch('https://cloud-drive-api-ag3g.onrender.com/recycle', { headers: getAuthHeaders() });
     if(r.status === 401) return;
     const files = await r.json();
     const btn = document.getElementById('binBtn');
@@ -671,7 +671,7 @@ async function updateBinBadge() {
 
 async function restoreFile(name) {
   try {
-    const r = await fetch(`http://127.0.0.1:5000/restore/${name}`, { method:'POST', headers: getAuthHeaders() });
+    const r = await fetch(`https://cloud-drive-api-ag3g.onrender.com/restore/${name}`, { method:'POST', headers: getAuthHeaders() });
     if(r.status === 401) { logout(); return; }
     showToast('File restored'); loadRecycle(); loadFiles();
   } catch { showToast('Restore failed'); }
@@ -679,7 +679,7 @@ async function restoreFile(name) {
 
 async function permanentDelete(name) {
   try {
-    const r = await fetch(`http://127.0.0.1:5000/permanent_delete/${name}`, { method:'DELETE', headers: getAuthHeaders() });
+    const r = await fetch(`https://cloud-drive-api-ag3g.onrender.com/permanent_delete/${name}`, { method:'DELETE', headers: getAuthHeaders() });
     if(r.status === 401) { logout(); return; }
     showToast('Permanently deleted'); loadRecycle();
   } catch { showToast('Delete failed'); }
@@ -815,7 +815,7 @@ window.onload = () => {
     loadFiles(); 
     updateBinBadge(); 
   } else {
-    window.location.href = 'http://localhost:3000';
+    window.location.href = 'https://cloud-drive-frontend-theta.vercel.app';
   }
 };
 </script>

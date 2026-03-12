@@ -7,8 +7,8 @@ from functools import wraps
 app = Flask(__name__)
 
 # --- SECURE CORS ---
-# This tells Flask it is safe to accept login requests specifically from your React app
-CORS(app, resources={r"/*": {"origins": "http://localhost:3000"}})
+# This tells Flask it is safe to accept login requests specifically from your React app on Vercel
+CORS(app, resources={r"/*": {"origins": "https://cloud-drive-frontend-theta.vercel.app"}})
 
 SUPABASE_URL = "https://kfjhespnobypmizhpszd.supabase.co"
 # (Note: In a production app, keep this key hidden in a .env file!)
