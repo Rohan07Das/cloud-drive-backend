@@ -1,4 +1,3 @@
-```markdown
 # Cloud Drive Backend
 
 A robust file management and storage orchestration engine built with **Flask**. This project provides a reliable backend for cloud-based storage services, featuring secure file handling, automated directory indexing, and a dedicated safety layer for deleted assets.
@@ -18,8 +17,8 @@ A robust file management and storage orchestration engine built with **Flask**. 
 * **Frontend:** HTML5/CSS3 (Integrated for testing and management).
 
 ## 📁 Project Structure
+```markdown
 
-```text
 ├── uploads/             # Primary directory for active cloud storage
 ├── recycle_bin/         # Secondary directory for temporary file retention
 ├── app.py               # Main application logic and API route orchestration
@@ -31,7 +30,7 @@ A robust file management and storage orchestration engine built with **Flask**. 
 ## 🛠️ Installation & Setup
 ### 1. Clone the repository
 ```bash
-git clone [https://github.com/Rohan07Das/cloud-drive-backend.git](https://github.com/Rohan07Das/cloud-drive-backend.git)
+git clone [https://github.com/Rohan07Das/cloud-drive-backend.git]
 cd cloud-drive-backend
 
 ```
@@ -68,6 +67,5 @@ The server will start at http://127.0.0.1:5000.
 
 
 *Developed by Rohan Lal Das as an individual technical project.*
-```
 
-```
+
