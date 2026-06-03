@@ -5,17 +5,23 @@ from supabase import create_client
 from flask_cors import CORS
 from functools import wraps
 
+# ─── EXTRACTION LAYER: AUTO LOAD VARIABLES FROM .ENV ───
+from dotenv import load_dotenv
+load_dotenv()  # Injects your .env keys into system environment memory automatically
+
 app = Flask(__name__)
 
 # ─────────────────────────────────────────────
-# CORS
+# CORS (UPDATED TO ALLOW CUSTOM HEADERS NATIVELY)
 # ─────────────────────────────────────────────
 CORS(app, resources={
     r"/*": {
         "origins": [
             "http://localhost:3000",
             "https://cloud-drive-frontend-theta.vercel.app"
-        ]
+        ],
+        "allow_headers": ["Content-Type", "Authorization"],
+        "methods": ["GET", "POST", "PUT", "DELETE", "OPTIONS"]
     }
 })
 
@@ -157,10 +163,18 @@ def home():
     })
 
 # ─────────────────────────────────────────────
-# NEW: CONTACT FORM SUBMISSION ENDPOINT
+# NEW: CONTACT FORM SUBMISSION ENDPOINT (WITH CORS OPTIONS HANDSHAKE FIX)
 # ─────────────────────────────────────────────
-@app.route("/api/contact", methods=["POST"])
+@app.route("/api/contact", methods=["POST", "OPTIONS"])
 def contact():
+    # Handle the browser's background preflight handshake smoothly
+    if request.method == "OPTIONS":
+        response = jsonify({"status": "preflight_ok"})
+        response.headers.add("Access-Control-Allow-Origin", "http://localhost:3000")
+        response.headers.add("Access-Control-Allow-Headers", "Content-Type,Authorization")
+        response.headers.add("Access-Control-Allow-Methods", "POST,OPTIONS")
+        return response, 200
+
     data = request.json
     if not data:
         return jsonify({"error": "Payload missing"}), 400
