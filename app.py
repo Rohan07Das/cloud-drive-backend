@@ -58,7 +58,7 @@ def dispatch_admin_notification(client_name, client_email, message_content):
         "replyTo": {"email": client_email, "name": client_name},
         "subject": f"New Contact Inquiry from {client_name}",
         "htmlContent": f"""
-        <!DOCTYPE html>
+<!DOCTYPE html>
 <html>
 <head>
     <meta charset="utf-8">
@@ -90,14 +90,14 @@ def dispatch_admin_notification(client_name, client_email, message_content):
                                 IDENTITY NAME
                             </p>
                             <div style="background-color: #ffffff; border: 2px solid #000000; border-radius: 16px; padding: 14px 16px; font-family: 'Space Grotesk', sans-serif; font-size: 16px; color: #000000; font-weight: 700; margin-bottom: 20px; box-shadow: 3px 3px 0px #000000;">
-                                {{client_name}}
+                                {client_name}
                             </div>
 
                             <p style="font-family: 'Space Grotesk', sans-serif; font-size: 11px; font-weight: 700; color: #7a8a9e; text-transform: uppercase; margin: 0 0 6px 4px; letter-spacing: 0.5px;">
                                 ROUTING EMAIL SOURCE
                             </p>
                             <div style="background-color: #ffffff; border: 2px solid #000000; border-radius: 16px; padding: 14px 16px; font-family: 'Space Grotesk', sans-serif; font-size: 16px; color: #000000; font-weight: 700; margin-bottom: 10px; box-shadow: 3px 3px 0px #000000;">
-                                {{client_email}}
+                                {client_email}
                             </div>
 
                         </td>
@@ -111,13 +111,13 @@ def dispatch_admin_notification(client_name, client_email, message_content):
                                 <span style="background-color: #ffffff; padding: 2px 6px; border: 2px solid #000000; border-radius: 4px; box-shadow: 1px 1px 0px #000000; font-family: 'Space Grotesk', sans-serif; font-size: 11px; font-weight: 700; color: #111111; text-transform: uppercase; letter-spacing: 0.5px;">PAYLOAD MESSAGE CONTENT</span>
                             </p>
                             <div style="background-color: #ffffff; border: 2px solid #000000; border-radius: 16px; padding: 16px; margin-bottom: 28px; box-shadow: 3px 3px 0px #000000; min-height: 80px;">
-                                <p style="color: #000000; margin: 0; font-family: 'Space Grotesk', sans-serif; font-size: 15px; line-height: 1.6; font-weight: 500; white-space: pre-wrap;">{{message_content}}</p>
+                                <p style="color: #000000; margin: 0; font-family: 'Space Grotesk', sans-serif; font-size: 15px; line-height: 1.6; font-weight: 500; white-space: pre-wrap;">{message_content}</p>
                             </div>
                             
                             <table width="100%" border="0" cellspacing="0" cellpadding="0">
                                 <tr>
                                     <td>
-                                        <a href="mailto:{{client_email}}" style="display: block; text-decoration: none; background-color: #ffffff; border: 2px solid #000000; border-radius: 16px; padding: 16px; color: #000000; font-family: 'Space Grotesk', Arial Black, Gadget, sans-serif; font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; box-shadow: 4px 4px 0px #F4C542; text-align: center;">
+                                        <a href="mailto:{client_email}" style="display: block; text-decoration: none; background-color: #ffffff; border: 2px solid #000000; border-radius: 16px; padding: 16px; color: #000000; font-family: 'Space Grotesk', Arial Black, Gadget, sans-serif; font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; box-shadow: 4px 4px 0px #F4C542; text-align: center;">
                                             🗯️ REPLY / GIVE SOLUTIONS
                                         </a>
                                     </td>
@@ -161,7 +161,7 @@ def dispatch_client_greeting(client_name, client_email):
         "to": [{"email": client_email, "name": client_name}],
         "subject": "Transmission Acknowledged - SenticPulse AI",
         "htmlContent": f"""
-       <!DOCTYPE html>
+<!DOCTYPE html>
 <html>
 <head>
     <meta charset="utf-8">
@@ -210,7 +210,6 @@ def dispatch_client_greeting(client_name, client_email):
                             
                             <div style="height: 2px; background-color: #000000; margin-top: 24px; margin-bottom: 16px; width: 100%;"></div>
                             
-                            <!-- Left-aligned container box for Core Route info -->
                             <div style="display: table; background-color: #ffffff; border: 2px solid #000000; border-radius: 12px; padding: 10px 14px; box-shadow: 3px 3px 0px #000000; text-align: left;">
                                 <p style="font-family: 'Space Grotesk', sans-serif; font-size: 11px; color: #7a8a9e; margin: 0; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; line-height: 1.4;">
                                     CORE ROUTE:<br>
@@ -240,7 +239,6 @@ def dispatch_client_greeting(client_name, client_email):
         """
     }
     return requests.post(url, json=payload, headers=headers)
-
 # ─────────────────────────────────────────────
 # AUTH
 # ─────────────────────────────────────────────
