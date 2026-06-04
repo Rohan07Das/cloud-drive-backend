@@ -25,6 +25,15 @@ CORS(app, resources={
     }
 })
 
+# ─── ADDED: CORS RESPONSE HEADER ASSIGNMENT FOR THE EMAIL FEATURE ───
+@app.after_request
+def append_cors_headers(response):
+    """Ensures frontend applications can securely parse the Brevo transaction response."""
+    response.headers.add("Access-Control-Allow-Origin", "https://cloud-drive-frontend-theta.vercel.app")
+    response.headers.add("Access-Control-Allow-Headers", "Content-Type,Authorization")
+    response.headers.add("Access-Control-Allow-Methods", "GET,POST,PUT,DELETE,OPTIONS")
+    return response
+
 # ─────────────────────────────────────────────
 # SUPABASE & BREVO CONFIGURATIONS
 # ─────────────────────────────────────────────
@@ -170,7 +179,7 @@ def contact():
     # Handle the browser's background preflight handshake smoothly
     if request.method == "OPTIONS":
         response = jsonify({"status": "preflight_ok"})
-        response.headers.add("Access-Control-Allow-Origin", "http://localhost:3000")
+        response.headers.add("Access-Control-Allow-Origin", "https://cloud-drive-frontend-theta.vercel.app")
         response.headers.add("Access-Control-Allow-Headers", "Content-Type,Authorization")
         response.headers.add("Access-Control-Allow-Methods", "POST,OPTIONS")
         return response, 200
