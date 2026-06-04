@@ -41,10 +41,10 @@ BREVO_API_KEY = os.environ.get("BREVO_API_KEY")
 ADMIN_EMAIL = os.environ.get("ADMIN_EMAIL", "aisenticpulse@gmail.com")
 
 # ─────────────────────────────────────────────
-# BREVO SYSTEM PIPELINE UTILITIES
+# BREVO SYSTEM PIPELINE UTILITIES (NEO-BRUTALIST THEME ALIGNED)
 # ─────────────────────────────────────────────
 def dispatch_admin_notification(client_name, client_email, message_content):
-    """Sends the user's query to your inbox with reply-to configuration."""
+    """Sends the user's query to your inbox styled with the Neo-Brutalist card layout."""
     url = "https://api.brevo.com/v3/smtp/email"
     headers = {
         "accept": "application/json",
@@ -58,21 +58,86 @@ def dispatch_admin_notification(client_name, client_email, message_content):
         "replyTo": {"email": client_email, "name": client_name},
         "subject": f"New Contact Inquiry from {client_name}",
         "htmlContent": f"""
-        <div style="font-family: sans-serif; padding: 20px; color: #333; line-height: 1.6;">
-            <h2 style="color: #4f46e5; border-bottom: 2px solid #e5e7eb; padding-bottom: 10px;">New Message Received</h2>
-            <p><strong>Sender Name:</strong> {client_name}</p>
-            <p><strong>Sender Email:</strong> {client_email}</p>
-            <div style="background-color: #f3f4f6; padding: 15px; border-left: 4px solid #4f46e5; margin-top: 15px; border-radius: 4px;">
-                <p style="margin: 0; white-space: pre-wrap;">{message_content}</p>
-            </div>
-            <p style="font-size: 12px; color: #6b7280; margin-top: 20px;">💡 Tip: You can reply directly to this email to respond to the sender.</p>
-        </div>
+        <!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="utf-8">
+        </head>
+        <body style="margin: 0; padding: 0; background-color: #f7f4eb; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;">
+            <table width="100%" border="0" cellspacing="0" cellpadding="0" style="background-color: #f7f4eb; padding: 40px 20px;">
+                <tr>
+                    <td align="center">
+                        <!-- Main Card Container -->
+                        <table width="550" border="0" cellspacing="0" cellpadding="0" style="background-color: #ffffff; border: 3px solid #000000; border-radius: 24px; box-shadow: 8px 8px 0px #000000; overflow: hidden; margin-bottom: 20px;">
+                            <tr>
+                                <td style="padding: 32px; text-align: left;">
+                                    
+                                    <!-- Title Node Header -->
+                                    <h1 style="font-family: Arial Black, Gadget, sans-serif; font-size: 26px; font-weight: 900; color: #000000; text-transform: uppercase; margin-top: 0; margin-bottom: 8px; letter-spacing: -0.5px;">
+                                        CREATE TASK NODE
+                                    </h1>
+                                    <div style="height: 3px; background-color: #000000; margin-bottom: 24px; width: 100%;"></div>
+                                    
+                                    <!-- Metadata Nodes -->
+                                    <p style="font-family: 'Courier New', Courier, monospace; font-size: 11px; font-weight: bold; color: #738290; text-transform: uppercase; margin: 0 0 6px 0; letter-spacing: 0.5px;">
+                                        IDENTITY NAME DESCRIPTOR
+                                    </p>
+                                    <div style="background-color: #ffffff; border: 2px solid #000000; border-radius: 12px; padding: 12px; font-size: 15px; color: #000000; font-weight: bold; margin-bottom: 16px; box-shadow: 2px 2px 0px #000000;">
+                                        {client_name}
+                                    </div>
+
+                                    <p style="font-family: 'Courier New', Courier, monospace; font-size: 11px; font-weight: bold; color: #738290; text-transform: uppercase; margin: 0 0 6px 0; letter-spacing: 0.5px;">
+                                        ROUTING EMAIL SOURCE
+                                    </p>
+                                    <div style="background-color: #ffffff; border: 2px solid #000000; border-radius: 12px; padding: 12px; font-size: 15px; color: #7a869a; margin-bottom: 20px; box-shadow: 2px 2px 0px #000000;">
+                                        {client_email}
+                                    </div>
+                                    
+                                    <!-- Content Node Container (Blush / Pastel Red Tint Accent) -->
+                                    <p style="font-family: 'Courier New', Courier, monospace; font-size: 11px; font-weight: bold; color: #738290; text-transform: uppercase; margin: 0 0 6px 0; letter-spacing: 0.5px;">
+                                        PAYLOAD MESSAGE CONTENT
+                                    </p>
+                                    <div style="background-color: #f3dfdd; border: 2px solid #000000; border-radius: 16px; padding: 20px; margin-bottom: 24px; box-shadow: 3px 3px 0px #000000;">
+                                        <p style="color: #000000; margin: 0; font-size: 14px; line-height: 1.6; font-weight: 500; white-space: pre-wrap;">{message_content}</p>
+                                    </div>
+                                    
+                                    <!-- Action Button Style Panel -->
+                                    <table width="100%" border="0" cellspacing="0" cellpadding="0">
+                                        <tr>
+                                            <td align="center">
+                                                <a href="mailto:{client_email}" style="display: block; text-decoration: none; background-color: #ffffff; border: 2px solid #000000; border-radius: 14px; padding: 14px 20px; color: #000000; font-family: Arial Black, Gadget, sans-serif; font-size: 12px; font-weight: 900; text-transform: uppercase; letter-spacing: 0.5px; box-shadow: 4px 4px 0px #000000; text-align: center;">
+                                                    COMMIT REALTIME REPLY ENTRY
+                                                </a>
+                                            </td>
+                                        </tr>
+                                    </table>
+
+                                </td>
+                            </tr>
+                        </table>
+                        
+                        <!-- Mini Footer Track -->
+                        <table width="550" border="0" cellspacing="0" cellpadding="0" style="background-color: #000000; border-radius: 12px; overflow: hidden;">
+                            <tr>
+                                <td style="padding: 12px; text-align: center;">
+                                    <p style="color: #ffffff; font-family: 'Courier New', Courier, monospace; font-size: 11px; margin: 0; font-weight: bold; text-transform: uppercase; letter-spacing: 0.5px;">
+                                        SYSTEM TRACK COLOR NODE // CONTROL ROUTING
+                                    </p>
+                                </td>
+                            </tr>
+                        </table>
+                        
+                    </td>
+                </tr>
+            </table>
+        </body>
+        </html>
         """
     }
     return requests.post(url, json=payload, headers=headers)
 
 def dispatch_client_greeting(client_name, client_email):
-    """Sends a responsive dark-themed greeting back to the visitor."""
+    """Sends a responsive Brutalist cream-themed greeting back to the platform visitor."""
     url = "https://api.brevo.com/v3/smtp/email"
     headers = {
         "accept": "application/json",
@@ -83,40 +148,68 @@ def dispatch_client_greeting(client_name, client_email):
     payload = {
         "sender": {"name": "SenticPulse Support", "email": ADMIN_EMAIL},
         "to": [{"email": client_email, "name": client_name}],
-        "subject": "Thank you for reaching out to SenticPulse AI",
+        "subject": "Transmission Acknowledged - SenticPulse AI",
         "htmlContent": f"""
         <!DOCTYPE html>
         <html>
         <head>
             <meta charset="utf-8">
         </head>
-        <body style="margin: 0; padding: 0; background-color: #0b0f19; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;">
-            <table width="100%" border="0" cellspacing="0" cellpadding="0" style="background-color: #0b0f19; padding: 40px 20px;">
+        <body style="margin: 0; padding: 0; background-color: #f7f4eb; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;">
+            <table width="100%" border="0" cellspacing="0" cellpadding="0" style="background-color: #f7f4eb; padding: 40px 20px;">
                 <tr>
                     <td align="center">
-                        <table width="600" border="0" cellspacing="0" cellpadding="0" style="background-color: #111827; border: 1px solid #1f2937; border-radius: 12px; overflow: hidden; box-shadow: 0 10px 25px -5px rgba(0,0,0,0.3);">
-                            <tr><td height="4" style="background: linear-gradient(90deg, #4f46e5, #06b6d4);"></td></tr>
+                        
+                        <!-- Greeting Container Box -->
+                        <table width="550" border="0" cellspacing="0" cellpadding="0" style="background-color: #ffffff; border: 3px solid #000000; border-radius: 24px; box-shadow: 8px 8px 0px #000000; overflow: hidden; margin-bottom: 20px;">
                             <tr>
-                                <td style="padding: 40px, 30px; text-align: left; padding: 40px;">
-                                    <h2 style="color: #ffffff; margin-top: 0; font-size: 24px; font-weight: 600; letter-spacing: -0.025em;">Hello {client_name},</h2>
-                                    <p style="color: #9ca3af; font-size: 16px; line-height: 1.7; margin-bottom: 24px;">
-                                        Thank you for contacting us! We've received your inquiry through our platform portal. Our team is reviewing the payload details and will get back to you shortly.
+                                <td style="padding: 36px; text-align: left;">
+                                    
+                                    <!-- Header Unit -->
+                                    <h1 style="font-family: Arial Black, Gadget, sans-serif; font-size: 26px; font-weight: 900; color: #000000; text-transform: uppercase; margin-top: 0; margin-bottom: 4px; letter-spacing: -0.5px;">
+                                        TRANSMISSION ARCHIVE
+                                    </h1>
+                                    <p style="font-family: 'Courier New', Courier, monospace; font-size: 11px; font-weight: bold; color: #738290; text-transform: uppercase; margin: 0 0 16px 0;">
+                                        STATUS: ACTIVE GATEWAY LOG
                                     </p>
-                                    <div style="background: rgba(79, 70, 229, 0.1); border: 1px solid rgba(79, 70, 229, 0.2); border-radius: 8px; padding: 16px; margin-bottom: 24px; text-align: center;">
-                                        <span style="color: #818cf8; font-size: 14px; font-weight: 500;">⚡ Case Transmission Logged Successfully</span>
+                                    <div style="height: 3px; background-color: #000000; margin-bottom: 24px; width: 100%;"></div>
+                                    
+                                    <h3 style="font-family: Arial, sans-serif; font-size: 18px; font-weight: 800; color: #000000; margin-top: 0; margin-bottom: 12px;">
+                                        Hello {client_name},
+                                    </h3>
+                                    
+                                    <p style="color: #333333; font-size: 15px; line-height: 1.6; margin-top: 0; margin-bottom: 24px; font-weight: 500;">
+                                        Thank you for connecting! Your payload structure has successfully cleared our system ingress. Our core team is already processing the submission and will establish contact shortly.
+                                    </p>
+                                    
+                                    <!-- Status Badge Component (Mint Green Accent Node) -->
+                                    <div style="background-color: #c9e4de; border: 2px solid #000000; border-radius: 12px; padding: 14px; margin-bottom: 28px; text-align: center; box-shadow: 3px 3px 0px #000000;">
+                                        <span style="color: #000000; font-family: 'Courier New', Courier, monospace; font-size: 12px; font-weight: 900; text-transform: uppercase; letter-spacing: 0.5px;">
+                                            ✔ CASE TRANSMISSION LOGGED SUCCESSFULLY
+                                        </span>
                                     </div>
-                                    <p style="color: #9ca3af; font-size: 15px; margin-bottom: 0;">
-                                        Best regards,<br>
-                                        <span style="color: #ffffff; font-weight: 600;">SenticPulse Core Engine Tech Team</span>
+                                    
+                                    <div style="height: 1px; background-color: #e5e5e5; margin-bottom: 20px; width: 100%;"></div>
+                                    
+                                    <p style="font-family: 'Courier New', Courier, monospace; font-size: 12px; color: #738290; margin: 0; font-weight: bold; line-height: 1.5;">
+                                        CORE ROUTE:<br>
+                                        <span style="color: #000000; font-family: Arial, sans-serif; font-weight: 800; font-size: 13px;">SENTICPULSE ENGINE AUTOMATION</span>
                                     </p>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td style="background-color: #0f172a; padding: 20px; text-align: center; border-top: 1px solid #1f2937;">
-                                    <p style="color: #6b7280; font-size: 12px; margin: 0;">This is an automated operational confirmation. Please do not reply directly to this notice.</p>
                                 </td>
                             </tr>
                         </table>
+
+                        <!-- Secondary Alert Sub-Banner (Lavender Accent Box) -->
+                        <table width="550" border="0" cellspacing="0" cellpadding="0" style="background-color: #dbcdf0; border: 3px solid #000000; border-radius: 14px; box-shadow: 4px 4px 0px #000000;">
+                            <tr>
+                                <td style="padding: 12px 20px; text-align: left;">
+                                    <p style="color: #000000; font-family: 'Courier New', Courier, monospace; font-size: 11px; margin: 0; font-weight: bold; text-transform: uppercase; line-height: 1.4;">
+                                        ⚠️ NOTICE: This is an automated operational confirmation buffer. Direct terminal replies to this address are not monitored.
+                                    </p>
+                                </td>
+                            </tr>
+                        </table>
+                        
                     </td>
                 </tr>
             </table>
