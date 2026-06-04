@@ -21,18 +21,10 @@ CORS(app, resources={
             "https://cloud-drive-frontend-theta.vercel.app"
         ],
         "allow_headers": ["Content-Type", "Authorization"],
-        "methods": ["GET", "POST", "PUT", "DELETE", "OPTIONS"]
+        "methods": ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+        "supports_credentials": True
     }
 })
-
-# ─── ADDED: CORS RESPONSE HEADER ASSIGNMENT FOR THE EMAIL FEATURE ───
-@app.after_request
-def append_cors_headers(response):
-    """Ensures frontend applications can securely parse the Brevo transaction response."""
-    response.headers.add("Access-Control-Allow-Origin", "https://cloud-drive-frontend-theta.vercel.app")
-    response.headers.add("Access-Control-Allow-Headers", "Content-Type,Authorization")
-    response.headers.add("Access-Control-Allow-Methods", "GET,POST,PUT,DELETE,OPTIONS")
-    return response
 
 # ─────────────────────────────────────────────
 # SUPABASE & BREVO CONFIGURATIONS
@@ -172,18 +164,10 @@ def home():
     })
 
 # ─────────────────────────────────────────────
-# NEW: CONTACT FORM SUBMISSION ENDPOINT (WITH CORS OPTIONS HANDSHAKE FIX)
+# CONTACT FORM SUBMISSION ENDPOINT (CORS OPTIMIZED)
 # ─────────────────────────────────────────────
-@app.route("/api/contact", methods=["POST", "OPTIONS"])
+@app.route("/api/contact", methods=["POST"])
 def contact():
-    # Handle the browser's background preflight handshake smoothly
-    if request.method == "OPTIONS":
-        response = jsonify({"status": "preflight_ok"})
-        response.headers.add("Access-Control-Allow-Origin", "https://cloud-drive-frontend-theta.vercel.app")
-        response.headers.add("Access-Control-Allow-Headers", "Content-Type,Authorization")
-        response.headers.add("Access-Control-Allow-Methods", "POST,OPTIONS")
-        return response, 200
-
     data = request.json
     if not data:
         return jsonify({"error": "Payload missing"}), 400
@@ -200,7 +184,7 @@ def contact():
         admin_res = dispatch_admin_notification(name, email, message)
         
         # 2. Fire the themed confirmation to the customer
-        client_res = dispatch_client_greeting(name, email)
+        dispatch_client_greeting(name, email)
 
         if admin_res.status_code in [200, 201]:
             return jsonify({
